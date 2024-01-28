@@ -41,8 +41,29 @@ function App() {
   };
 
   const onCheckout = () => {
-    tele.MainButton.text = "Pay :)";
+    // Prepare data to send to Telegram server (modify this as needed)
+    const orderData = {
+      items: cartItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+      total: calculateTotal(cartItems),
+    };
+
+    // Send data to Telegram server
+    tele.sendPayload({
+      method: "checkout",
+      payload: orderData,
+    });
+
+    // Show the payment interface
+    tele.MainButton.text = "Pay";
     tele.MainButton.show();
+  };
+  const calculateTotal = (items) => {
+    return items.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   return (
